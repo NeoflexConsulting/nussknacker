@@ -1,0 +1,55 @@
+package pl.touk.nussknacker.engine.lite.kafka
+
+import com.dimafeng.testcontainers.{ForAllTestContainer, GenericContainer, KafkaContainer, SingleContainer}
+import org.testcontainers.containers.{GenericContainer => JavaGenericContainer}
+import com.typesafe.scalalogging.LazyLogging
+import org.scalatest.TestSuite
+import org.testcontainers.containers.output.Slf4jLogConsumer
+import org.testcontainers.containers.{BindMode, Network}
+import pl.touk.nussknacker.engine.kafka.KafkaClient
+import pl.touk.nussknacker.engine.version.BuildInfo
+
+import java.io.File
+
+// Created base class and used one test class for each test case because runtime has fixed one Nussknacker scenario
+trait BaseNuKafkaRuntimeDockerTest extends ForAllTestContainer with NuKafkaRuntimeTestMixin { self: TestSuite with LazyLogging =>
+
+  private val kafkaHostname = "kafka"
+
+  private val dockerTag = sys.env.getOrElse("dockerTagName", BuildInfo.version)
+  private val liteKafkaRuntimeDockerName = s"touk/nussknacker-lite-kafka-runtime:$dockerTag"
+
+  private val network = Network.newNetwork
+
+  protected val kafkaContainer: KafkaContainer = {
+    val container = KafkaContainer().configure(_.withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "FALSE"))
+    configureNetwork(container, kafkaHostname)
+    container
+  }
+
+  protected def configureNetwork(container: SingleContainer[_ <: JavaGenericContainer[_]], networkAlias: String): Unit = {
+    container.underlyingUnsafeContainer.withNetwork(network)
+    container.underlyingUnsafeContainer.withNetworkAliases(networkAlias)
+  }
+
+  protected var fixture: NuKafkaRuntimeTestTestCaseFixture = _
+
+  protected def prepareRuntimeContainer(scenarioFile: File, additionalEnvs: Map[String, String] = Map.empty): GenericContainer = {
+    val container = GenericContainer(
+      liteKafkaRuntimeDockerName,
+      env = Map("KAFKA_ADDRESS" -> dockerNetworkKafkaBoostrapServer) ++ additionalEnvs,
+    )
+    container.underlyingUnsafeContainer.withNetwork(network)
+    container.underlyingUnsafeContainer.withFileSystemBind(scenarioFile.toString, "/opt/nussknacker/conf/scenario.json", BindMode.READ_ONLY)
+    container.start()
+    container.underlyingUnsafeContainer.followOutput(new Slf4jLogConsumer(logger.underlying))
+    container
+  }
+
+  override protected def kafkaBoostrapServer: String = kafkaContainer.bootstrapServers
+
+  protected def dockerNetworkKafkaBoostrapServer: String = s"$kafkaHostname:9092"
+
+  protected lazy val kafkaClient = new KafkaClient(kafkaBoostrapServer, "not-used-zk-address", suiteName)
+
+}
