@@ -19,7 +19,7 @@ To see the biggest differences please consult the [changelog](Changelog.md).
 * [#2493](https://github.com/TouK/nussknacker/pull/2493) kafka configuration should be moved to components provider configuration - look at `components.kafka` in dev-application.conf for example
 * [#2582](https://github.com/TouK/nussknacker/pull/2582) `KafkaUtils.toProducerProperties` setup only basic properties now (`bootstrap.servers` and serializers) - before the change it
   was setting options which are not always good choice (for transactional producers wasn't)
-* [#2564](https://github.com/TouK/nussknacker/pull/2564/files) Flink union now takes only value parameters, use input branch name to refer in output variable, if you want to distinguish source branch in output variable please use map variable, example in docs 
+* [#2564](https://github.com/TouK/nussknacker/pull/2564/files) Flink union now takes only value parameters for branches, output variable must be of the same type, if you want to distinguish source branch in output variable please use map variable, example in docs 
 
 ## In version 1.1.0 (Not released yet)
 :::info

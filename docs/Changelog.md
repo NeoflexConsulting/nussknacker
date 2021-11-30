@@ -24,7 +24,7 @@ Nussknacker versions
 * [#2543](https://github.com/TouK/nussknacker/pull/2543) Eager parameters can have helpers injected.
 * [#2493](https://github.com/TouK/nussknacker/pull/2493) kafka configuration is now provided by components provider configuration, if not provided avroKryoGenericRecordSchemaIdSerialization default is set to true - previously false
 * [#2569](https://github.com/TouK/nussknacker/pull/2569) Flink aggregations are now part of flinkBaseComponents. `flink-model-util` is no longer needed and is removed.
-* [#2564](https://github.com/TouK/nussknacker/pull/2564/files) Flink union simplification, it now takes only value parameters, keys are determined by input branch ids
+* [#2564](https://github.com/TouK/nussknacker/pull/2564/files) Flink union simplification, it now takes only value parameters for branches, output variable must be of the same type
      
 1.1.0 (Not released yet)
 ------------------------
