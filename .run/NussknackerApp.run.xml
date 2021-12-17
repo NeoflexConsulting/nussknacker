@@ -18,6 +18,7 @@
 
       <env name="OPENAPI_COMPONENT_DIR" value="../../../components/openapi/target/scala-2.12" />
       <env name="SQL_COMPONENT_DIR" value="../../../components/sql/target/scala-2.12" />
+      <env name="JDBC_SINK_COMPONENT_DIR" value="../../../engine/flink/components/jdbc/target/scala-2.12" />
 
       <env name="FLINK_REST_URL" value="http://localhost:3031" />
       <env name="FLINK_QUERYABLE_STATE_PROXY_URL" value="localhost:3063" />
